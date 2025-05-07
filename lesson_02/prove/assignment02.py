@@ -1,7 +1,7 @@
 """
 Course    : CSE 351
 Assignment: 02
-Student   : <your name here>
+Student   : <Emily Titus>
 
 Instructions:
     - review instructions in the course
@@ -54,6 +54,18 @@ class Account():
 class Bank():
     # TODO - implement this class here
     ...
+
+    accountsdict = {
+
+    }
+    def __init__(self,dict):
+        self.accountsdict = dict
+
+    def deposit(self, account, amount): 
+        depositaccount = self.accountsdict.get(account)
+        depositaccount += amount
+        self.accountsdict.update({account : depositaccount})
+        
 
 
 # ---------------------------------------------------------------------------
