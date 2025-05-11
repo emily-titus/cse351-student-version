@@ -28,20 +28,69 @@ def main():
     
     log = Log(show_terminal=True)
     log.start_timer()
-
-    bank = Bank()
+    bankdict={ 1: Money("0"), 2: Money("0"), 3: Money("0"), 4: Money("0"), 5: Money("0"), 6: Money("0"), 7: Money("0"), 8: Money("0"), 9: Money("0"), 10: Money("0"), 11: Money("0"), 12: Money("0"), 13: Money("0"), 14: Money("0"), 15: Money("0"), 16: Money("0"), 17: Money("0"), 18: Money("0"), 19: Money("0"), 20: Money("0")}
+    bank = Bank(bankdict)
 
     # TODO - Add a ATM_Reader for each data file
+    atm1 = ATM_Reader(data_files[0], bank)
+    atm2 = ATM_Reader(data_files[1], bank)
+    atm3 = ATM_Reader(data_files[2], bank)
+    atm4 = ATM_Reader(data_files[3], bank)
+    atm5 = ATM_Reader(data_files[4], bank)
+    atm6 = ATM_Reader(data_files[5], bank)
+    atm7 = ATM_Reader(data_files[6], bank)
+    atm8 = ATM_Reader(data_files[7], bank)
+    atm9 = ATM_Reader(data_files[8], bank)
+    atm10 = ATM_Reader(data_files[9], bank)
+    
+    atm1.start()
+    atm2.start()
+    atm3.start()
+    atm4.start()
+    atm5.start()
+    atm6.start()
+    atm7.start()
+    atm8.start()
+    atm9.start()
+    atm10.start()
 
+    atm1.join()
+    atm2.join()
+    atm3.join()
+    atm4.join()
+    atm5.join()
+    atm6.join()
+    atm7.join()
+    atm8.join()
+    atm9.join()
+    atm10.join()
     test_balances(bank)
 
     log.stop_timer('Total time')
 
 
 # ===========================================================================
-class ATM_Reader():
+class ATM_Reader(threading.Thread):
     # TODO - implement this class here
     ...
+    
+    def __init__(self, data_file, bank):
+        threading.Thread.__init__(self)
+        self.data_file = data_file
+        self.bank = bank
+
+    def run(self,):
+        with open(self.data_file) as f:
+            next(f)
+            next(f)
+            for line in f:
+                account_num = int(line.split(",")[0])
+                type = line.split(",")[1]
+                amount = Money(line.split(",")[2])
+                if type == "w":
+                   self.bank.withdraw(account_num, amount)
+                else:
+                    self.bank.deposit(account_num, amount)
 
 
 # ===========================================================================
@@ -49,6 +98,14 @@ class Account():
     # TODO - implement this class here
     ...
 
+    money = Money("")
+
+    def __init__(self, money):
+        self.money = money
+
+    def get_balance(self):
+        return self.money
+        
 
 # ===========================================================================
 class Bank():
@@ -61,10 +118,25 @@ class Bank():
     def __init__(self,dict):
         self.accountsdict = dict
 
-    def deposit(self, account, amount): 
-        depositaccount = self.accountsdict.get(account)
-        depositaccount += amount
-        self.accountsdict.update({account : depositaccount})
+    def deposit(self, account, amount):
+        camount = Money(str(amount)) 
+        current = self.accountsdict[int(account)]
+        newamount=Money("000")
+        newamount.digits = current._Money__add(current.digits, camount.digits)
+        print(f"New balance after deposit: {newamount}")
+        self.accountsdict[int(account)]=newamount
+
+    def withdraw(self, account, amount): 
+        camount = Money(str(amount)) 
+        current = self.accountsdict[int(account)]
+        newamount=Money("000")
+        newamount.digits = current._Money__sub(current.digits, camount.digits)
+        print(f"New balance after deposit: {newamount}")
+        self.accountsdict[int(account)]=newamount
+    def get_balance(self, account):
+        return self.accountsdict.get(int(account))
+
+    
         
 
 

@@ -2,7 +2,7 @@
 Course: CSE 351 
 Lesson: L03 team activity
 File:   team.py
-Author: <Add name here>
+Author: <Emily>
 
 Purpose: Retrieve Star Wars details from a server
 
@@ -42,6 +42,12 @@ from cse351 import *
 # global
 call_count = 0
 
+class ThreadUrl(threading.Thread):
+    def __init__(self, url):
+        threading.Thread.__init__(self)
+        self.url = url 
+
+
 def get_urls(film6, kind):
     global call_count
 
@@ -51,6 +57,7 @@ def get_urls(film6, kind):
         call_count += 1
         item = get_data_from_server(url)
         print(f'  - {item['name']}')
+
 
 def main():
     global call_count
