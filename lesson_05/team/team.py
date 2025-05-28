@@ -2,7 +2,7 @@
 Course: CSE 351
 Lesson: L05 Team Activity
 File:   team.py
-Author: <Add name here>
+Author: Emily
 Purpose: Find prime numbers
 
 Instructions:
@@ -32,6 +32,11 @@ def is_prime(n):
         i += 6
     return True
 
+def process_number(number):
+    if is_prime(number):
+        return number
+    return None
+
 def main():
     log = Log(show_terminal=True)
     log.start_timer()
@@ -44,6 +49,8 @@ def main():
     start = 10000000000
     range_count = 100000
     numbers_processed = 0
+
+    for pool_size in range(1,mp.cpu_count() +1):
     for i in range(start, start + range_count):
         numbers_processed += 1
         if is_prime(i):
