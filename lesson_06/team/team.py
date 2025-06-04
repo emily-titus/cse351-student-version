@@ -121,19 +121,21 @@ class Board():
     def _word_at_this_location(self, row, col, direction, word):
         """ Helper function: is the word found on the board at (x, y) in a direction """
         dir_x, dir_y = self.directions[direction]
-        changes = []
+        r = row 
+        c = col
 
         for letter in word:
             board_letter = self.get_letter(row, col)
             if board_letter == letter:
-                changes.append(row, col)
                 row += dir_x
                 col += dir_y
             else:
                 return False
             
-        for r, c in changes:
+        for _ in word:
             self.highlight(r, c)
+            r += dir_x
+            c += dir_y
             
         return True
 
