@@ -3,6 +3,7 @@ Course: CSE 351
 Assignment: 06
 Author: Emily
 
+I think this assignment deserves a 4 because I was able to get the pictures to process all the way and made it a minute faster. 
 Instructions:
 
 - see instructions in the assignment description in Canvas
