@@ -1,7 +1,7 @@
 """
 Course: CSE 351
 Assignment: 06
-Author: [Your Name]
+Author: Emily
 
 Instructions:
 
@@ -107,8 +107,76 @@ def run_image_processing_pipeline():
 
     # TODO
     # - create queues
+    que1 = mp.Queue()
+    que2 = mp.Queue()
+    que3 = mp.Queue()
+
+    filenames = [f for f in os.listdir(INPUT_FOLDER)]
     # - create barriers
     # - create the three processes groups
+    p1 = mp.Process(target=smooth_worker, args=(que1, que2))
+    p2 = mp.Process(target=grayscale_worker, args=(que2, que3))
+    p3 = mp.Process(target=edge_worker, args=(que3,))
+
+    p1.start()
+    p2.start()
+    p3.start()
+
+    for filename in filenames:
+        input_path = os.path.join(INPUT_FOLDER, filename)
+        que1.put((filename, input_path))
+
+    que1.put("DONE")
+
+    p1.join()
+    p2.join()
+    p3.join()
+
+
+def smooth_worker(queue_in, queue_out):
+    while True:
+        item = queue_in.get()
+        if item == "DONE":
+            queue_out.put("DONE")
+            break
+
+        filename, image_path = item
+        img = cv2.imread(image_path)
+        if img is None:
+            print(f"Couldn't read {image_path}")
+            continue
+
+        smoothed_img = task_smooth_image(img, GAUSSIAN_BLUR_KERNEL_SIZE)
+        queue_out.put((filename, smoothed_img))
+
+def grayscale_worker(queue_in, queue_out):
+    while True:
+        item = queue_in.get()
+        if item == "DONE":
+            queue_out.put("DONE")
+            break
+
+        filename, smoothed_img = item
+        grayscale_img = task_convert_to_grayscale(smoothed_img)
+        queue_out.put((filename, grayscale_img))
+
+def edge_worker(queue_in):
+    create_folder_if_not_exists(STEP3_OUTPUT_FOLDER)
+
+    while True:
+        item = queue_in.get()
+        if item == "DONE":
+            break
+
+        filename, grayscale_img = item
+        edge_img = task_detect_edges(grayscale_img, CANNY_THRESHOLD1, CANNY_THRESHOLD2)
+
+        output_path = os.path.join(STEP3_OUTPUT_FOLDER, filename)
+        cv2.imwrite(output_path, edge_img)
+
+
+
+
     # - you are free to change anything in the program as long as you
     #   do all requirements.
 

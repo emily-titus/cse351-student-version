@@ -2,7 +2,7 @@
 Course: CSE 351 
 Week: 07 Team
 File:   team.py
-Author: <Add name here>
+Author: <Emily>
 
 Purpose: Solve the Dining philosophers problem to practice skills you have learned so far in this course.
 
@@ -68,7 +68,13 @@ MAX_MEALS_EATEN = PHILOSOPHERS * 5 # NOTE: Total meals to be eaten, not per phil
 
 def main():
     # TODO - Create the forks.
+    forks = []
+    for _ in range (PHILOSOPHERS):
+        forks.append
+
     # TODO - Create PHILOSOPHERS philosophers.
+    philosophers_list = []
+    
     # TODO - Start them eating and thinking.
     # TODO - Display how many times each philosopher ate.
     pass
