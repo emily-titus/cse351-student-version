@@ -2,7 +2,7 @@
 Course: CSE 351 
 Week: 8 Team
 File:   team.py
-Author: <Add name here>
+Author: Emily
 
 Purpose: Solve the Dining philosophers problem to practice skills you have learned so far in this course.
 
@@ -67,12 +67,69 @@ Suggestions and team Discussion:
 """
 
 import time
+import random
 import threading
 
 PHILOSOPHERS = 5
 MAX_MEALS_EATEN = PHILOSOPHERS * 5 # NOTE: Total meals to be eaten, not per philosopher!
+DELAY = 1
+
+meals = 0
+meal_counts = [0] * PHILOSOPHERS
 
 # TODO - Create the Waiter class.
+class Waiter:
+  def __init__(self):
+    self.lock = threading.Lock()
+    self.forks = [False] * PHILOSOPHERS
+
+  def can_eat(self, id):
+    with self.lock:
+      left = self.forks[id]
+      right = self.forks[(id + 1) % PHILOSOPHERS]
+      if left == False and right == False:
+          self.forks[id] = True
+          self.forks[(id + 1) % PHILOSOPHERS] = True
+          return True
+      else:
+          return False
+          
+  def finished_eating(self, id):
+    with self.lock:
+      self.forks[id] = False
+      self.forks[(id + 1) % PHILOSOPHERS] = False
+
+class Philosopher(threading.Thread):
+  def __init__(self, id, waiter, philo_lock):
+    threading.Thread.__init__(self)
+    self.id = id
+    self.waiter = waiter
+    self.meal_lock = philo_lock
+
+  def run(self):
+    global meals
+    global meal_counts
+    done = False
+    while not done:
+      with self.meal_lock:
+         if meals > MAX_MEALS_EATEN:
+            done = True 
+            continue
+      if self.waiter.can_eat(self.id):
+        self.dining()
+        with self.meal_lock:
+          meals += 1
+          meal_counts[self.id] += 1
+          self.waiter.finished_eating(self.id)
+          self.thinking()
+      else:
+         time.sleep(random.uniform(0.05, 0.2))
+
+  
+        
+
+      
+
 
 def main():
     # TODO - Get an instance of the Waiter.
