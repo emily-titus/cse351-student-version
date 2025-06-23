@@ -47,15 +47,13 @@ def solve_path(maze):
             return True
         
         # Explore neighbors manually: up, down, left, right
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-        for dr, dc in directions:
-            new_pos = (row + dr, col + dc)
-            if inner_recursion(new_pos):
-                return True
+        if maze.get_possible_moves(row, col) == True:
+            maze.move(row, col, COLOR)
+            return positon
 
             
         path.pop()
-        maze.visit(row, col)
+        maze.move(row, col, COLOR)
         return False
     
     inner_recursion(start)

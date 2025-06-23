@@ -38,7 +38,7 @@ def guest_partying(id, count):
     print(f'Guest: {id}, count = {count}')
     time.sleep(random.uniform(0, 1))
 
-def cleaner():
+def cleaner(id, clean_room_lock, cleaned_count, start_time):
     """
     do the following for TIME seconds
         cleaner will wait to try to clean the room (cleaner_waiting())
@@ -47,9 +47,16 @@ def cleaner():
         Take some time cleaning (cleaner_cleaning())
         display message STOPPING_CLEANING_MESSAGE
     """
-    pass
+    while time.time() - start_time < TIME:
+        cleaner_waiting()
+        clean_room_lock.acquire()
+        cleaned_count.value += 1
+        print(STARTING_CLEANING_MESSAGE)
+        cleaner_cleaning(id)
+        print(STOPPING_CLEANING_MESSAGE)
 
-def guest():
+
+def guest(id, guest_count_lock, clean_room_lock, room_count, party_count, start_time):
     """
     do the following for TIME seconds
         guest will wait to try to get access to the room (guest_waiting())
@@ -58,14 +65,40 @@ def guest():
         Take some time partying (call guest_partying())
         display message STOPPING_PARTY_MESSAGE if the guest is the last one leaving in the room
     """
-    pass
+    while time.time() - start_time < TIME:
+        guest_waiting()
+        num_in_room = 0
+        with guest_count_lock:
+            room_count.value += 1
+            num_in_room = room_count.value
+            if room_count.vaue == 1:
+                clean_room_lock.acquire()
+                print(STARTING_PARTY_MESSAGE)
+                party_count.value += 1
+        guest_partying(id, num_in_room)
+
+        with guest_count_lock:
+            room_count.value -= 1
+            if room_count.value == 0:
+                print(STOPPING_PARTY_MESSAGE)
+                clean_room_lock.release()
+
 
 def main():
     # Start time of the running of the program.
     start_time = time.time()
-
+    
     # TODO - add any variables, data structures, processes you need
+    cleaned_count = mp.Value('i', 0)
+    party_count = mp.Value('i', 0)
+    room_count = mp.Value('i', 0)
+
     # TODO - add any arguments to cleaner() and guest() that you need
+    guest_count_lock = mp.Lock()
+    clean_room_lock = mp.Lock()
+
+    cleaners = [mp.Process()] #this needs more stuff 
+    guests = [mp.Process()] #this needs more stuff
 
     # Results
     print(f'Room was cleaned {cleaned_count} times, there were {party_count} parties')
