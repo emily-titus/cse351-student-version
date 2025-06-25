@@ -86,10 +86,8 @@ def solve_find_end(maze):
     # When one of the threads finds the end position, stop all of them.
     global stop
     stop = False
-    threads = []
     start = maze.get_start_pos()
-
-
+    visited = set()
 
 
 def find_end(log, filename, delay):
