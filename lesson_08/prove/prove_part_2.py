@@ -2,7 +2,7 @@
 Course: CSE 351 
 Assignment: 08 Prove Part 2
 File:   prove_part_2.py
-Author: <Add name here>
+Author: Emily
 
 Purpose: Part 2 of assignment 8, finding the path to the end of a maze using recursion.
 
@@ -86,6 +86,8 @@ def solve_find_end(maze):
     # When one of the threads finds the end position, stop all of them.
     global stop
     stop = False
+    threads = []
+    start = maze.get_start_pos()
 
 
 

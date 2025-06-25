@@ -29,35 +29,34 @@ FAST_SPEED = 1
 speed = SLOW_SPEED
 
 # TODO: Add any functions needed here.
+def find_path(maze:Maze, path:list, row:int, col:int):
+    if not maze.can_move_here(row, col):
+        return False
+    
+    maze.move(row, col, COLOR)
+    path.append((row, col))
 
-def solve_path(maze):
+    if maze.at_end(row, col):
+        return True
+    
+    moves = maze.get_possible_moves(row, col)
+    for move in moves:
+        move_row, move_col = move
+        if find_path(maze, path, move_row, move_col):
+            return True
+
+    maze.restore(row, col)
+    path.pop()
+    return None
+
+def solve_path(maze:Maze):
     """ Solve the maze and return the path found between the start and end positions.  
         The path is a list of positions, (x, y) """
     path = []
-    start = maze.get_start_pos()
-    # TODO: Solve the maze recursively while tracking the correct path.
-    def inner_recursion(positon):
-        row, col = positon
-        if not maze.can_move_here(row, col):
-            return False
-        maze.move(row, col, COLOR)
-        path.append(positon)
-
-        if maze.at_end(row, col):
-            return True
-        
-        # Explore neighbors manually: up, down, left, right
-        if maze.get_possible_moves(row, col) == True:
-            maze.move(row, col, COLOR)
-            return positon
-
-            
-        path.pop()
-        maze.move(row, col, COLOR)
-        return False
     
-    inner_recursion(start)
-
+    # TODO: Solve the maze recursively while tracking the correct path.
+    maze.get_start_pos()
+                
     # Hint: You can create an inner function to do the recursion
 
     return path
