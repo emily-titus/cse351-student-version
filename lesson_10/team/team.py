@@ -88,7 +88,51 @@ def merge_normal(arr):
 def merge_sort_thread(arr):
     # TODO - Add your code here to use threads.
     #        call, you need to create a thread to handle that call
-    pass
+    threads = []
+     # Base case of the recursion - must have at least 2+ items
+    if len(arr) > 1:
+ 
+        # Finding the mid of the array
+        mid = len(arr) // 2
+ 
+        # Dividing the array elements
+        L = arr[:mid]
+ 
+        # into 2 halves
+        R = arr[mid:]
+ 
+        # Sorting the first half
+        t1 = threading.Thread(merge_sort(L))
+        t1.start()
+ 
+        # Sorting the second half
+        t2 = threading.Thread(merge_sort(R))
+        t2.start()
+ 
+        i = j = k = 0
+ 
+        # Copy data to temporary arrays L[] and R[]
+        while i < len(L) and j < len(R):
+            if L[i] < R[j]:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+ 
+        # Checking if any element was left
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+ 
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+        t1.join()
+        t2.join()
 
 
 def merge_sort_process(arr):
