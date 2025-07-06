@@ -27,12 +27,15 @@ class Program
     private static readonly HttpClient HttpClient = new();
     private const string TopApiUrl = "http://127.0.0.1:8790";
     
+    private static int _callCount = 0;
+    
     // Makes one URL call to the server
     private static async Task<JObject?> GetDataFromServerAsync(string url)
     {
         try
         {
             // TODO - increment calls to the server int
+            Interlocked.Increment(ref _callCount);
             var jsonString = await HttpClient.GetStringAsync(url);
             return JObject.Parse(jsonString);
         }
@@ -75,17 +78,18 @@ class Program
         
         var film6 = await GetDataFromServerAsync($"{TopApiUrl}/films/6");
         Console.WriteLine(film6["director"]);
+        List<Task> tasks = new List<Task>();
 
-        await GetUrlsAsync(film6, "characters");
-        await GetUrlsAsync(film6, "planets");
-        await GetUrlsAsync(film6, "starships");
-        await GetUrlsAsync(film6, "vehicles");
-        await GetUrlsAsync(film6, "species");
+        tasks.Add(GetUrlsAsync(film6, "characters"));
+        tasks.Add(GetUrlsAsync(film6, "planets")); 
+        tasks.Add(GetUrlsAsync(film6, "starships"));
+        tasks.Add(GetUrlsAsync(film6, "vehicles"));
+        tasks.Add(GetUrlsAsync(film6, "species"));
         
         stopwatch.Stop();
         
         // TODO - display the number of calls to the server
-
+        Console.WriteLine($"Total calls to the server = {_callCount}");
         Console.WriteLine($"Total execution time: {stopwatch.Elapsed.TotalSeconds:F2} seconds");
     }
 }
